@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--android:theme="@android:style/Theme.Translucent"-->
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#000000</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorAccent">#01000000</item>
+        <item name="android:windowBackground">@color/c_1</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+</resources>

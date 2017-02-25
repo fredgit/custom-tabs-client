@@ -41,7 +41,7 @@ import java.util.ArrayList;
  *
  * <p>
  * <strong>Note:</strong> The constants below are public for the browser implementation's benefit.
- * You are strongly encouraged to use {@link CustomTabsIntent.Builder}.</p>
+ * You are strongly encouraged to use {@link Builder}.</p>
  */
 public final class CustomTabsIntent {
 
@@ -183,7 +183,7 @@ public final class CustomTabsIntent {
      * Extra that specifies the {@link RemoteViews} showing on the secondary toolbar. If this extra
      * is set, the other secondary toolbar configurations will be overriden. The height of the
      * {@link RemoteViews} should not exceed 56dp.
-     * @see CustomTabsIntent.Builder#setSecondaryToolbarViews(RemoteViews, int[], PendingIntent).
+     * @see Builder#setSecondaryToolbarViews(RemoteViews, int[], PendingIntent).
      */
     public static final String EXTRA_REMOTEVIEWS =
             "android.support.customtabs.extra.EXTRA_REMOTEVIEWS";
@@ -195,7 +195,7 @@ public final class CustomTabsIntent {
      * Note that Custom Tabs will override the default onClick behavior of the listed {@link View}s.
      * If you do not care about the current url, you can safely ignore this extra and use
      * {@link RemoteViews#setOnClickPendingIntent(int, PendingIntent)} instead.
-     * @see CustomTabsIntent.Builder#setSecondaryToolbarViews(RemoteViews, int[], PendingIntent).
+     * @see Builder#setSecondaryToolbarViews(RemoteViews, int[], PendingIntent).
      */
     public static final String EXTRA_REMOTEVIEWS_VIEW_IDS =
             "android.support.customtabs.extra.EXTRA_REMOTEVIEWS_VIEW_IDS";
@@ -207,7 +207,7 @@ public final class CustomTabsIntent {
      * Note when this {@link PendingIntent} is triggered, it will have the current url as data
      * field, also the id of the clicked {@link View}, specified by
      * {@link #EXTRA_REMOTEVIEWS_CLICKED_ID}.
-     * @see CustomTabsIntent.Builder#setSecondaryToolbarViews(RemoteViews, int[], PendingIntent).
+     * @see Builder#setSecondaryToolbarViews(RemoteViews, int[], PendingIntent).
      */
     public static final String EXTRA_REMOTEVIEWS_PENDINGINTENT =
             "android.support.customtabs.extra.EXTRA_REMOTEVIEWS_PENDINGINTENT";
@@ -215,7 +215,7 @@ public final class CustomTabsIntent {
     /**
      * Extra that specifies which {@link View} has been clicked. This extra will be put to the
      * {@link PendingIntent} sent from Custom Tabs when a view in the {@link RemoteViews} is clicked
-     * @see CustomTabsIntent.Builder#setSecondaryToolbarViews(RemoteViews, int[], PendingIntent).
+     * @see Builder#setSecondaryToolbarViews(RemoteViews, int[], PendingIntent).
      */
     public static final String EXTRA_REMOTEVIEWS_CLICKED_ID =
             "android.support.customtabs.extra.EXTRA_REMOTEVIEWS_CLICKED_ID";
@@ -259,7 +259,7 @@ public final class CustomTabsIntent {
      */
     public void launchUrl(Context context, Uri url) {
         intent.setData(url);
-        ContextCompat.startActivity(context, intent, startAnimationBundle);
+        ContextCompat.startActivities(context, new Intent[]{intent}, startAnimationBundle);
     }
 
     private CustomTabsIntent(Intent intent, Bundle startAnimationBundle) {
@@ -278,7 +278,7 @@ public final class CustomTabsIntent {
         private boolean mInstantAppsEnabled = true;
 
         /**
-         * Creates a {@link CustomTabsIntent.Builder} object associated with no
+         * Creates a {@link Builder} object associated with no
          * {@link CustomTabsSession}.
          */
         public Builder() {
@@ -286,7 +286,7 @@ public final class CustomTabsIntent {
         }
 
         /**
-         * Creates a {@link CustomTabsIntent.Builder} object associated with a given
+         * Creates a {@link Builder} object associated with a given
          * {@link CustomTabsSession}.
          *
          * Guarantees that the {@link Intent} will be sent to the same component as the one the
@@ -368,7 +368,7 @@ public final class CustomTabsIntent {
          * Sets the action button that is displayed in the Toolbar.
          * <p>
          * This is equivalent to calling
-         * {@link CustomTabsIntent.Builder#addToolbarItem(int, Bitmap, String, PendingIntent)}
+         * {@link Builder#addToolbarItem(int, Bitmap, String, PendingIntent)}
          * with {@link #TOOLBAR_ACTION_BUTTON_ID} as id.
          *
          * @param icon The icon.
@@ -376,7 +376,7 @@ public final class CustomTabsIntent {
          * @param pendingIntent pending intent delivered when the button is clicked.
          * @param shouldTint Whether the action button should be tinted.
          *
-         * @see CustomTabsIntent.Builder#addToolbarItem(int, Bitmap, String, PendingIntent)
+         * @see Builder#addToolbarItem(int, Bitmap, String, PendingIntent)
          */
         public Builder setActionButton(@NonNull Bitmap icon, @NonNull String description,
                 @NonNull PendingIntent pendingIntent, boolean shouldTint) {
@@ -393,7 +393,7 @@ public final class CustomTabsIntent {
         /**
          * Sets the action button that is displayed in the Toolbar with default tinting behavior.
          *
-         * @see CustomTabsIntent.Builder#setActionButton(
+         * @see Builder#setActionButton(
          * Bitmap, String, PendingIntent, boolean)
          */
         public Builder setActionButton(@NonNull Bitmap icon, @NonNull String description,
@@ -527,7 +527,7 @@ public final class CustomTabsIntent {
 
     /**
      * @return The maximum number of allowed toolbar items for
-     * {@link CustomTabsIntent.Builder#addToolbarItem(int, Bitmap, String, PendingIntent)} and
+     * {@link Builder#addToolbarItem(int, Bitmap, String, PendingIntent)} and
      * {@link CustomTabsIntent#EXTRA_TOOLBAR_ITEMS}.
      */
     public static int getMaxToolbarItems() {

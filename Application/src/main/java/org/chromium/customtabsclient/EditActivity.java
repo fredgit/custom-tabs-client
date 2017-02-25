@@ -56,13 +56,11 @@ import org.chromium.customtabsclient.shared.ServiceConnectionCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.handle;
-
 /**
  * Example client activity for using Chrome Custom Tabs.
  */
-public class MainActivity extends Activity implements OnClickListener, ServiceConnectionCallback {
-    private static final String TAG = "CustomTabsClientExample";
+public class EditActivity extends Activity implements OnClickListener, ServiceConnectionCallback {
+    private static final String TAG = "EditActivity";
     private static final String TOOLBAR_COLOR = "#ef6c00";
 
     private EditText mEditText;
@@ -71,8 +69,6 @@ public class MainActivity extends Activity implements OnClickListener, ServiceCo
     private CustomTabsServiceConnection mConnection;
     private String mPackageNameToBind;
     private Button mConnectButton;
-    private Button mWarmupButton;
-    private Button mMayLaunchButton;
     private Button mLaunchButton;
     private MediaPlayer mMediaPlayer;
     private int mNavigationEvent;
@@ -103,22 +99,17 @@ public class MainActivity extends Activity implements OnClickListener, ServiceCo
             mHandler.postDelayed(this, 1000);
         }
     };
-    private boolean mIsNeedShowDialog = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.edit);
         mEditText = (EditText) findViewById(R.id.edit);
-        mConnectButton = (Button) findViewById(R.id.connect_button);
-        mWarmupButton = (Button) findViewById(R.id.warmup_button);
-        mMayLaunchButton = (Button) findViewById(R.id.may_launch_button);
-        mLaunchButton = (Button) findViewById(R.id.launch_button);
+        mConnectButton = (Button) findViewById(R.id.connect_button_edit);
+        mLaunchButton = (Button) findViewById(R.id.launch_button_edit);
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         mEditText.requestFocus();
         mConnectButton.setOnClickListener(this);
-        mWarmupButton.setOnClickListener(this);
-        mMayLaunchButton.setOnClickListener(this);
         mLaunchButton.setOnClickListener(this);
         mMediaPlayer = MediaPlayer.create(this, R.raw.amazing_grace);
 
@@ -143,7 +134,7 @@ public class MainActivity extends Activity implements OnClickListener, ServiceCo
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = convertView;
                 if (view == null) {
-                    view = LayoutInflater.from(MainActivity.this).inflate(
+                    view = LayoutInflater.from(EditActivity.this).inflate(
                             android.R.layout.simple_list_item_2, parent, false);
                 }
                 Pair<String, String> data = getItem(position);
@@ -228,21 +219,14 @@ public class MainActivity extends Activity implements OnClickListener, ServiceCo
 
     @Override
     public void onClick(View v) {
-        String url = mEditText.getText().toString();
+//        String url = mEditText.getText().toString();
+        String url  = "https://developer.chrome.com/multidevice/android/customtabs";
+
         int viewId = v.getId();
 
-        if (viewId == R.id.connect_button) {
+        if (viewId == R.id.connect_button_edit) {
             bindCustomTabsService();
-        } else if (viewId == R.id.warmup_button) {
-            boolean success = false;
-            if (mClient != null) success = mClient.warmup(0);
-            if (!success) mWarmupButton.setEnabled(false);
-        } else if (viewId == R.id.may_launch_button) {
-            CustomTabsSession session = getSession();
-            boolean success = false;
-            if (mClient != null) success = session.mayLaunchUrl(Uri.parse(url), null, null);
-            if (!success) mMayLaunchButton.setEnabled(false);
-        } else if (viewId == R.id.launch_button) {
+        } else if (viewId == R.id.launch_button_edit) {
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder(getSession(new NavigationCallback()));
             builder.setToolbarColor(Color.parseColor(TOOLBAR_COLOR)).setShowTitle(true);
             prepareMenuItems(builder);
@@ -253,7 +237,7 @@ public class MainActivity extends Activity implements OnClickListener, ServiceCo
             builder.setCloseButtonIcon(
                     BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_back));
             CustomTabsIntent customTabsIntent = builder.build();
-//            CustomTabsHelper.addKeepAliveExtra(this, customTabsIntent.intent);
+            CustomTabsHelper.addKeepAliveExtra(this, customTabsIntent.intent);
             customTabsIntent.launchUrl(this, Uri.parse(url));
 
         }
@@ -272,14 +256,10 @@ public class MainActivity extends Activity implements OnClickListener, ServiceCo
 
     private void prepareActionButton(CustomTabsIntent.Builder builder) {
         // An example intent that sends an email.
-//        Intent actionIntent = new Intent(Intent.ACTION_SEND);
-//        actionIntent.setType("*/*");
-//        actionIntent.putExtra(Intent.EXTRA_EMAIL, "example@example.com");
-//        actionIntent.putExtra(Intent.EXTRA_SUBJECT, "example");
-
-        Intent actionIntent = new Intent(this, EditActivity.class);
-        actionIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
+        Intent actionIntent = new Intent(Intent.ACTION_SEND);
+        actionIntent.setType("*/*");
+        actionIntent.putExtra(Intent.EXTRA_EMAIL, "example@example.com");
+        actionIntent.putExtra(Intent.EXTRA_SUBJECT, "example");
         PendingIntent pi = PendingIntent.getActivity(this, 0, actionIntent, 0);
         Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_share);
         builder.setActionButton(icon, "send email", pi, true);
@@ -295,16 +275,12 @@ public class MainActivity extends Activity implements OnClickListener, ServiceCo
     public void onServiceConnected(CustomTabsClient client) {
         mClient = client;
         mConnectButton.setEnabled(false);
-        mWarmupButton.setEnabled(true);
-        mMayLaunchButton.setEnabled(true);
         mLaunchButton.setEnabled(true);
     }
 
     @Override
     public void onServiceDisconnected() {
         mConnectButton.setEnabled(true);
-        mWarmupButton.setEnabled(false);
-        mMayLaunchButton.setEnabled(false);
         mLaunchButton.setEnabled(false);
         mClient = null;
     }
@@ -315,16 +291,7 @@ public class MainActivity extends Activity implements OnClickListener, ServiceCo
             Log.d(TAG, "onNavigationEvent: Code = " + navigationEvent);
             if (CustomTabsCallback.TAB_HIDDEN == navigationEvent) {
                 // todo example 1 : add the logic to handle when the custom tab close.
-//                mNavigationEvent = navigationEvent;
-
-            } else if (CustomTabsCallback.TAB_SHOWN == navigationEvent) {
-                // todo example 2: add the logic to check if need to show dialog on first time.
-                if (mIsNeedShowDialog) {
-                    Intent broadcastIntent = new Intent(MainActivity.this, BottomBarManager.class);
-                    sendBroadcast(broadcastIntent);
-                    mIsNeedShowDialog = false;
-                }
-
+                mNavigationEvent = navigationEvent;
             }
         }
     }
@@ -347,10 +314,10 @@ public class MainActivity extends Activity implements OnClickListener, ServiceCo
             builder.setCloseButtonIcon(
                     BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_back));
             CustomTabsIntent customTabsIntent = builder.build();
-            CustomTabsHelper.addKeepAliveExtra(this, customTabsIntent.intent);
+            customTabsIntent.intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             customTabsIntent.launchUrl(this, Uri.parse(url));
 
-//            finish();
+            finish();
         }
 
     }
@@ -365,7 +332,6 @@ public class MainActivity extends Activity implements OnClickListener, ServiceCo
     protected void onPause() {
         Log.d(TAG, "onNavigationEvent: onPause = ");
         mNavigationEvent = 0;  // todo example 1:2 : check if need reset the value.
-
         super.onPause();
 
     }

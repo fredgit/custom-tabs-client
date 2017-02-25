@@ -28,7 +28,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.support.annotation.RestrictTo;
+//import android.support.annotation.RestrictTo;
 import android.text.TextUtils;
 
 import java.util.ArrayList;

@@ -1,3 +1,5 @@
+
+
 // Copyright 2016 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +26,10 @@ import android.support.customtabs.CustomTabsSession;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import org.chromium.customtabsclient.R;
+import org.chromium.customtabsclient.SecondActivity;
+import org.chromium.customtabsclient.SessionHelper;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -35,8 +41,12 @@ public class BottomBarManager extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         int clickedId = intent.getIntExtra(CustomTabsIntent.EXTRA_REMOTEVIEWS_CLICKED_ID, -1);
-        Toast.makeText(context, "Current URL " + intent.getDataString() + "\nClicked id "
-                + clickedId, Toast.LENGTH_SHORT).show();
+
+        Intent i = new Intent(context, SecondActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
+
+
 
         CustomTabsSession session = SessionHelper.getCurrentSession();
         if (session == null) return;
